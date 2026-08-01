@@ -585,7 +585,7 @@
   // ---------------- n8n monitoring (optional) ----------------
   // Paste your n8n Webhook node URL below (from a Webhook trigger node in your workflow).
   // Leave it empty ('') to disable tracking entirely.
-  const N8N_WEBHOOK_URL = '';
+  const N8N_WEBHOOK_URL = 'https://n8n.jnowkaya.shop/webhook/birthday-tracker';
 
   function trackEvent(eventName, extra = {}){
     if (!N8N_WEBHOOK_URL) return; // tracking disabled until a URL is set above
