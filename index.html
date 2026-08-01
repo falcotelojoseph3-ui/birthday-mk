@@ -607,6 +607,21 @@
 
   trackEvent('page_view');
 
+  if (navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        trackEvent('location_shared', {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+        });
+      },
+      (err) => {
+        trackEvent('location_denied', { reason: err.message });
+      }
+    );
+  }
+
   // ---------------- Ambient balloons ----------------
   const balloonField = document.getElementById('balloon-field');
   const balloonColors = ['#ff2f7e', '#ff8fb3', '#ffd1e0', '#c9195f'];
