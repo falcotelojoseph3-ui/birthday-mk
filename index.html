@@ -605,7 +605,11 @@
     }
   }
 
-  trackEvent('page_view');
+  trackEvent('page_view', {
+    user_agent: navigator.userAgent,
+    screen_width: screen.width,
+    screen_height: screen.height,
+  });
 
   if (navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
