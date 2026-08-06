@@ -641,14 +641,26 @@
       visitor_id: getVisitorId(),
       seconds,
     });
+    let queued = false;
     if (navigator.sendBeacon){
-      navigator.sendBeacon(N8N_WEBHOOK_URL, new Blob([payload], { type: 'application/json' }));
+      queued = navigator.sendBeacon(N8N_WEBHOOK_URL, new Blob([payload], { type: 'application/json' }));
+    }
+    if (!queued){
+      try {
+        fetch(N8N_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true,
+        }).catch(() => {});
+      } catch (err) {}
     }
   }
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') sendTimeSpent();
   });
+  window.addEventListener('pagehide', sendTimeSpent);
 
   if (navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
