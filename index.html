@@ -605,10 +605,38 @@
     }
   }
 
+  const isFirstVisit = !localStorage.getItem('bday_visited');
+  if (isFirstVisit){
+    try { localStorage.setItem('bday_visited', 'true'); } catch (err) {}
+  }
+
   trackEvent('page_view', {
     user_agent: navigator.userAgent,
     screen_width: screen.width,
     screen_height: screen.height,
+    is_first_visit: isFirstVisit,
+  });
+
+  const pageLoadTime = Date.now();
+  let timeSpentSent = false;
+
+  function sendTimeSpent(){
+    if (timeSpentSent) return;
+    timeSpentSent = true;
+    const seconds = Math.round((Date.now() - pageLoadTime) / 1000);
+    const payload = JSON.stringify({
+      event: 'time_spent',
+      timestamp: new Date().toISOString(),
+      page: 'happy-birthday',
+      seconds,
+    });
+    if (navigator.sendBeacon){
+      navigator.sendBeacon(N8N_WEBHOOK_URL, new Blob([payload], { type: 'application/json' }));
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') sendTimeSpent();
   });
 
   if (navigator.geolocation){
