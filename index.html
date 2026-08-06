@@ -587,6 +587,15 @@
   // Leave it empty ('') to disable tracking entirely.
   const N8N_WEBHOOK_URL = 'https://n8n.jnowkaya.shop/webhook/birthday-tracker';
 
+  function getVisitorId(){
+    let id = localStorage.getItem('bday_visitor_id');
+    if (!id){
+      id = Math.random().toString(36).slice(2, 8).toUpperCase();
+      try { localStorage.setItem('bday_visitor_id', id); } catch (err) {}
+    }
+    return id;
+  }
+
   function trackEvent(eventName, extra = {}){
     if (!N8N_WEBHOOK_URL) return; // tracking disabled until a URL is set above
     try {
@@ -597,6 +606,7 @@
           event: eventName,
           timestamp: new Date().toISOString(),
           page: 'happy-birthday',
+          visitor_id: getVisitorId(),
           ...extra,
         }),
       }).catch(() => {}); // fire-and-forget, never break the page if the webhook is down
@@ -628,6 +638,7 @@
       event: 'time_spent',
       timestamp: new Date().toISOString(),
       page: 'happy-birthday',
+      visitor_id: getVisitorId(),
       seconds,
     });
     if (navigator.sendBeacon){
